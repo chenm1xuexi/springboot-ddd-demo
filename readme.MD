@@ -12,8 +12,4 @@
 - 使用Spring-rest-docs配合测试用例生成API文档
 - 测试用H2数据库
 - Git版本控制
-- Netty容器
-
-# 项目依赖
-
-- spring-boot-starter-webflux
+- Undertow容器
