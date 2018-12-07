@@ -75,7 +75,7 @@ dependencies
 	        "io.vavr:vavr-jackson:${vavrVersion}",
 	        // SpringWeb支持
 	        "org.springframework.boot:spring-boot-starter-web",
-	        "org.springframework.boot:spring-boot-starter-underrow",
+	        "org.springframework.boot:spring-boot-starter-undertow",
 	        // Jpa
 	        "org.springframework.boot:spring-boot-starter-data-jpa",
 	        // Rest第三级超文本驱动
