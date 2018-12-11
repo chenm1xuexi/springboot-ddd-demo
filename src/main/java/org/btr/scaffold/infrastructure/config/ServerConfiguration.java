@@ -42,6 +42,7 @@ public class ServerConfiguration
     return objectMapper;
   }
 
+  @Bean
   HttpMessageConverters jacksonMessageConverter(ObjectMapper objectMapper)
   {
     return new HttpMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper));
