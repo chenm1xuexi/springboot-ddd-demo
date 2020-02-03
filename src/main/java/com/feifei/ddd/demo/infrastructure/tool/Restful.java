@@ -1,11 +1,11 @@
-package org.btr.scaffold.infrastructure.tool;
+package com.feifei.ddd.demo.infrastructure.tool;
 
+import com.feifei.ddd.demo.infrastructure.ApiError;
 import io.vavr.API;
 import io.vavr.collection.Seq;
 import io.vavr.control.Either;
 import io.vavr.control.Option;
 import lombok.val;
-import org.btr.scaffold.infrastructure.ApiError;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 

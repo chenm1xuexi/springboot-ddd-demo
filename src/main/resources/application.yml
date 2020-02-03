@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: springboot-ddd-demo
+  datasource:
+    url: jdbc:mysql://localhost:3306/ddd-demo
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+server:
+  port: 8888
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
