@@ -33,3 +33,21 @@ include::{snippets}/user-create-business-400/http-response.adoc[]
 
 === 示例响应3
 include::{snippets}/user-create-logic-400/http-response.adoc[]
+
+[[apis-user-info]]
+=== 1.1.2 用户详情 /users/{id}
+
+=== 请求URI
+include::{snippets}/user-info-200/path-parameters.adoc[]
+
+=== 响应参数
+include::{snippets}/user-info-200/response-fields.adoc[]
+
+=== 示例请求
+include::{snippets}/user-info-200/curl-request.adoc[]
+
+=== 示例响应1
+include::{snippets}/user-info-200/http-response.adoc[]
+
+=== 示例响应2
+include::{snippets}/user-info-404/http-response.adoc[]

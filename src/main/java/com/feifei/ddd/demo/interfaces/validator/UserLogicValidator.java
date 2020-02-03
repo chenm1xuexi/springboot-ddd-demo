@@ -2,6 +2,7 @@ package com.feifei.ddd.demo.interfaces.validator;
 
 import com.feifei.ddd.demo.infrastructure.ApiError;
 import com.feifei.ddd.demo.interfaces.dto.user.UserCreate;
+import com.feifei.ddd.demo.interfaces.dto.user.UserEditDTO;
 import io.vavr.collection.Seq;
 import io.vavr.control.Either;
 import io.vavr.control.Validation;
@@ -37,6 +38,23 @@ public class UserLogicValidator {
                 .toEither();
     }
 
+    /**
+     * 对编辑用户信息进行逻辑校验
+     *
+     * @author shixiongfei
+     * @date 2020-02-03
+     * @updateDate 2020-02-03
+     * @updatedBy shixiongfei
+     * @param
+     * @return
+     */
+    public static Either<Seq<ApiError>, UserEditDTO> validate(UserEditDTO request) {
+        return validateUsername(request.getUsername())
+                .combine(validatePassword(request.getPassword()))
+                .ap((a, b) -> request)
+                .toEither();
+    }
+
     private static Validation<ApiError, String> validatePassword(String password) {
         return StringUtils.isBlank(password)
                 ? Invalid(ApiError.create(1, "密码为空"))
@@ -48,4 +66,5 @@ public class UserLogicValidator {
                 ? Invalid(ApiError.create(0, "用户名为空"))
                 : Valid(username);
     }
+
 }

@@ -2,16 +2,19 @@ package com.feifei.ddd.demo.infrastructure.jpa.user;
 
 import com.feifei.ddd.demo.domain.user.UserRepository;
 import com.feifei.ddd.demo.domain.user.entity.User;
+import com.feifei.ddd.demo.infrastructure.jpa.assembler.UserAssembler;
 import com.feifei.ddd.demo.infrastructure.jpa.mapper.UserMapper;
-import com.feifei.ddd.demo.infrastructure.jpa.po.TbUser;
 import com.feifei.ddd.demo.infrastructure.utils.CustomAssert;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.BeanUtils;
+import lombok.val;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 import static com.feifei.ddd.demo.infrastructure.constant.error.UserErrorConstants.ADD_USER_FAILED;
+import static com.feifei.ddd.demo.infrastructure.constant.error.UserErrorConstants.UPDATE_USER_FAILED;
 
 /**
  * 用户仓储实现类，用于对领域对象进行持久化
@@ -30,9 +33,21 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User save(User user) {
-        TbUser tbUser = new TbUser();
-        BeanUtils.copyProperties(user, tbUser);
-        CustomAssert.lessThanSource2Error(1, userMapper.insert(tbUser),ADD_USER_FAILED);
+        // 这里需要一层转换，我们可以抽象出一个编译类，专门用于对象间的数据交换UserAssembler
+        val tbUser = UserAssembler.toPO(user);
+        CustomAssert.lessThanSource2Error(1, userMapper.insert(tbUser), ADD_USER_FAILED);
+        return user;
+    }
+
+    @Override
+    public Optional<User> getById(String id) {
+        return Optional.ofNullable(UserAssembler.toEntity(userMapper.selectById(id)));
+    }
+
+    @Override
+    public User edit(User user) {
+        var tbUser = UserAssembler.toPO(user);
+        CustomAssert.lessThanSource2Error(1, userMapper.updateById(tbUser), UPDATE_USER_FAILED);
         return user;
     }
 }

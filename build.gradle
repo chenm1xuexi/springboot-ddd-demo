@@ -73,6 +73,7 @@ dependencies
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
 	compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
 	compile group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: '3.3.1'
+	compile group: 'com.alibaba', name: 'fastjson', version: '1.2.62'
 
 
 	// Java8函数式增强

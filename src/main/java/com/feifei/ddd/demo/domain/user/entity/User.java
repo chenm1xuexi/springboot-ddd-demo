@@ -3,6 +3,7 @@ package com.feifei.ddd.demo.domain.user.entity;
 import com.feifei.ddd.demo.infrastructure.ApiError;
 import com.feifei.ddd.demo.infrastructure.tool.IdWorker;
 import com.feifei.ddd.demo.interfaces.dto.user.UserCreate;
+import com.feifei.ddd.demo.interfaces.dto.user.UserEditDTO;
 import io.vavr.collection.Seq;
 import io.vavr.control.Either;
 import lombok.*;
@@ -62,5 +63,16 @@ public class User {
         }
 
         return Right(new User(request));
+    }
+
+    public static Either<Seq<ApiError>, User> edit(String id, UserEditDTO request) {
+        if (request.getPassword().length() < 6) {
+            return Left(Seq(ApiError.create(1, "密码不足6位")));
+        }
+        User user = new User();
+        user.setId(id);
+        user.setUsername(request.getUsername());
+        user.setPassword(request.getPassword());
+        return Right(user);
     }
 }

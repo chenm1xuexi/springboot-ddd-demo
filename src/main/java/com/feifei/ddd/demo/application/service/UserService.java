@@ -1,9 +1,12 @@
 package com.feifei.ddd.demo.application.service;
 
 import com.feifei.ddd.demo.infrastructure.ApiError;
+import com.feifei.ddd.demo.interfaces.dto.user.UserEditDTO;
+import com.feifei.ddd.demo.interfaces.dto.user.UserInfoDTO;
 import com.feifei.ddd.demo.interfaces.dto.user.UserCreate;
 import io.vavr.collection.Seq;
 import io.vavr.control.Either;
+import io.vavr.control.Option;
 
 /**
  * 用于应用服务层，用于对接口请求
@@ -26,4 +29,30 @@ public interface UserService {
      * @return
      */
     Either<Seq<ApiError>, String> create(UserCreate userCreate);
+
+    /**
+     * 通过资源主键来查询用户详情信息
+     *
+     * @author shixiongfei
+     * @date 2020-02-03
+     * @updateDate 2020-02-03
+     * @updatedBy shixiongfei
+     * @param id 资源主键id
+     * @return
+     */
+    Option<UserInfoDTO> getInfo(String id);
+
+    /**
+     * 编辑这里采用3级rest来表达，id是拼接在uri之后的参数
+     * 更新成功后，返回UserInfoDTO给客户
+     * user => userInfoDTO在应用服务层进行编排转换
+     *
+     * @author shixiongfei
+     * @date 2020-02-03
+     * @updateDate 2020-02-03
+     * @updatedBy shixiongfei
+     * @param
+     * @return
+     */
+    Option<Either<Seq<ApiError>, UserInfoDTO>> edit(String id, UserEditDTO request);
 }
