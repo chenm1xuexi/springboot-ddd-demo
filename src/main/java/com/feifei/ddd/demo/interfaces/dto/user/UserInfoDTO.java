@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 /**
  * 查询用户信息详情dto
  *
- * @author shixiongfei
+ * @author xiaofeifei
  * @date 2020-02-03
  * @since
  */

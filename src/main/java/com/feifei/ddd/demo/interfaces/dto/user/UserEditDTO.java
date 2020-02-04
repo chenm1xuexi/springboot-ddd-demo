@@ -9,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 /**
  * 用户编辑请求dto
  *
- * @author shixiongfei
+ * @author xiaofeifei
  * @date 2020-02-03
  * @since
  */

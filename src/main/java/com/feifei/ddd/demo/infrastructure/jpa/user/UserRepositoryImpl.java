@@ -1,10 +1,13 @@
 package com.feifei.ddd.demo.infrastructure.jpa.user;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.feifei.ddd.demo.domain.user.UserRepository;
 import com.feifei.ddd.demo.domain.user.entity.User;
 import com.feifei.ddd.demo.infrastructure.jpa.assembler.UserAssembler;
 import com.feifei.ddd.demo.infrastructure.jpa.mapper.UserMapper;
+import com.feifei.ddd.demo.infrastructure.jpa.po.TbUser;
 import com.feifei.ddd.demo.infrastructure.utils.CustomAssert;
+import io.vavr.control.Option;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -49,5 +52,18 @@ public class UserRepositoryImpl implements UserRepository {
         var tbUser = UserAssembler.toPO(user);
         CustomAssert.lessThanSource2Error(1, userMapper.updateById(tbUser), UPDATE_USER_FAILED);
         return user;
+    }
+
+    @Override
+    public Option<User> getByUsername(String username) {
+        QueryWrapper<TbUser> wrapper = new QueryWrapper<>();
+        wrapper.eq("username", username);
+        val tbUser = userMapper.selectOne(wrapper);
+        return Option.of(tbUser).map(UserAssembler::toEntity);
+    }
+
+    @Override
+    public void delete(String id) {
+        userMapper.deleteById(id);
     }
 }

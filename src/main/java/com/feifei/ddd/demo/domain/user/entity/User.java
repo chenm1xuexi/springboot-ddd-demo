@@ -6,6 +6,7 @@ import com.feifei.ddd.demo.interfaces.dto.user.UserCreate;
 import com.feifei.ddd.demo.interfaces.dto.user.UserEditDTO;
 import io.vavr.collection.Seq;
 import io.vavr.control.Either;
+import io.vavr.control.Validation;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -58,21 +59,13 @@ public class User {
      * @return
      */
     public static Either<Seq<ApiError>, User> create(UserCreate request) {
-        if (request.getPassword().length() < 6) {
-            return Left(Seq(ApiError.create(1, "密码不足6位")));
-        }
-
-        return Right(new User(request));
+        return validatePassword(request.getPassword()).map(t -> new User(request));
     }
 
-    public static Either<Seq<ApiError>, User> edit(String id, UserEditDTO request) {
-        if (request.getPassword().length() < 6) {
-            return Left(Seq(ApiError.create(1, "密码不足6位")));
-        }
-        User user = new User();
-        user.setId(id);
-        user.setUsername(request.getUsername());
-        user.setPassword(request.getPassword());
-        return Right(user);
+    public static Either<Seq<ApiError>, String> validatePassword(String password) {
+        Validation<Seq<ApiError>, String> result = password.length() < 6
+                ? Invalid(Seq(ApiError.create(1, "密码不足6位")))
+                : Valid(password);
+        return result.toEither();
     }
 }

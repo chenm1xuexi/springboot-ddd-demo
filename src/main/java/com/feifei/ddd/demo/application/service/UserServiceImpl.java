@@ -19,8 +19,6 @@ import lombok.val;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static io.vavr.API.Right;
-
 
 /**
  * 用户应用服务实现类
@@ -61,9 +59,12 @@ public class UserServiceImpl implements UserService {
         // 因为对用户进行编辑需要先检索数据库，数据库属于基础设施层，所以不能在聚合根中直接编写，否则违背了DDD的设计理念
         // 所以为了达到实现的目的，我们这里就需要引入领域服务了UserDomainService
         // 因为先要通过用户名来查询用户信息是否存在是属于业务逻辑，应该放到领域层，不可暴露在外
-        val data = userDomainService.edit(id, request);
+        val result = userDomainService.edit(id, request);
+        return result.map(t -> t.map(repository::edit).map(UserAssembler::toDTO));
+    }
 
-        return data.map(UserAssembler::toDTO)
-                .map(API::Right);
+    @Override
+    public void delete(String id) {
+        repository.delete(id);
     }
 }

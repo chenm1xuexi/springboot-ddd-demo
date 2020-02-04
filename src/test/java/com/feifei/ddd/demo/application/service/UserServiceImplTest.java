@@ -8,8 +8,6 @@ import com.feifei.ddd.demo.infrastructure.ApiError;
 import com.feifei.ddd.demo.infrastructure.tool.IdWorker;
 import com.feifei.ddd.demo.interfaces.dto.user.UserCreate;
 import com.feifei.ddd.demo.interfaces.dto.user.UserEditDTO;
-import com.feifei.ddd.demo.interfaces.dto.user.UserInfoDTO;
-import io.vavr.collection.Seq;
 import io.vavr.control.Either;
 import io.vavr.control.Option;
 import lombok.AccessLevel;
@@ -19,14 +17,16 @@ import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.junit.Test;
 
 import java.util.Optional;
 
-import static io.vavr.API.None;
+import static io.vavr.API.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 /**
@@ -96,18 +96,27 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void editShouldReturnSome() throws Exception {
+    public void editShouldReturnSomeRight() throws Exception {
 
         val dto = new UserEditDTO("Gibson", "54321");
 
         val user = new User();
         user.setId(IdWorker.getId());
         user.setUsername("Gibson");
-        // when(repository.edit(any(User.class))).thenReturn(user);
-        when(userDomainService.edit(anyString(), any(UserEditDTO.class))).thenReturn(Option.some(user));
+        when(repository.edit(any(User.class))).thenReturn(user);
+        when(userDomainService.edit(anyString(), any(UserEditDTO.class))).thenReturn(Option.some(Right(user)));
         val result = userService.edit("1", dto);
         Assertions.assertThat(result).isInstanceOf(Option.Some.class);
         Assertions.assertThat(result.get().get().getUsername()).isEqualTo("Gibson");
+    }
+
+    @Test
+    public void editShouldReturnSomeLeft() throws Exception {
+        val dto = new UserEditDTO("Gibson", "54321");
+        when(userDomainService.edit(anyString(), any(UserEditDTO.class))).thenReturn(Option.some(Left(Seq(ApiError.create(3,"用户名已注册")))));
+        val result = userService.edit("1", dto);
+        Assertions.assertThat(result).isInstanceOf(Option.Some.class);
+        Assertions.assertThat(result.get().getLeft().head().msg).isEqualTo("用户名已注册");
     }
 
     @Test
@@ -116,6 +125,12 @@ public class UserServiceImplTest {
         when(userDomainService.edit(anyString(), any(UserEditDTO.class))).thenReturn(None());
         val result = userService.edit("1", dto);
         Assertions.assertThat(result).isInstanceOf(Option.None.class);
+    }
+
+    @Test
+    public void deleteShouldOneTime() throws Exception {
+        userService.delete("1");
+        Mockito.verify(repository, times(1)).delete(anyString());
     }
 }
 

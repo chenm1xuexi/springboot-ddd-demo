@@ -1,6 +1,10 @@
 package com.feifei.ddd.demo.infrastructure.utils;
 
 import com.feifei.ddd.demo.infrastructure.exception.FlyException;
+import org.apache.commons.collections4.CollectionUtils;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * 自定义断言校验
@@ -31,5 +35,11 @@ public final class CustomAssert {
 
     public static void throw2Error(String errorMsg) {
         throw new FlyException(errorMsg);
+    }
+
+    public static void empty2Error(List<?> list, String errorMsg) {
+        if (CollectionUtils.isEmpty(list)) {
+            throw new FlyException(errorMsg);
+        }
     }
 }

@@ -78,4 +78,10 @@ public class UserApi {
                 Case($Right($Some($Right($()))), msg -> Restful.ok(msg.get().get())));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity delete(@PathVariable String id) {
+        service.delete(id);
+        return Restful.noContent();
+    }
+
 }

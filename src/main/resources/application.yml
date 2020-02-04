@@ -2,14 +2,14 @@ spring:
   application:
     name: springboot-ddd-demo
   datasource:
-    url: jdbc:mysql://localhost:3306/ddd-demo
+    url: jdbc:mysql://localhost:3306/ddd-demo?useSSL=false
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 
 server:
-  port: 8888
+  port: 8080
 
 mybatis-plus:
   configuration:

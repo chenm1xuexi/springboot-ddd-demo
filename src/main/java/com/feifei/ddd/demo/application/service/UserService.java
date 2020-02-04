@@ -33,10 +33,10 @@ public interface UserService {
     /**
      * 通过资源主键来查询用户详情信息
      *
-     * @author shixiongfei
+     * @author xiaofeifei
      * @date 2020-02-03
      * @updateDate 2020-02-03
-     * @updatedBy shixiongfei
+     * @updatedBy xiaofeifei
      * @param id 资源主键id
      * @return
      */
@@ -47,12 +47,24 @@ public interface UserService {
      * 更新成功后，返回UserInfoDTO给客户
      * user => userInfoDTO在应用服务层进行编排转换
      *
-     * @author shixiongfei
+     * @author xiaofeifei
      * @date 2020-02-03
      * @updateDate 2020-02-03
-     * @updatedBy shixiongfei
+     * @updatedBy xiaofeifei
      * @param
      * @return
      */
     Option<Either<Seq<ApiError>, UserInfoDTO>> edit(String id, UserEditDTO request);
+
+    /**
+     * 通过资源主键来移除用户信息
+     *
+     * @author xiaofeifei
+     * @date 2020-02-04
+     * @updateDate 2020-02-04
+     * @updatedBy xiaofeifei
+     * @param
+     * @return
+     */
+    void delete(String id);
 }

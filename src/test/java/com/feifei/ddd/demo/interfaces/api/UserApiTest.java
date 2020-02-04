@@ -33,8 +33,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 
 import static io.vavr.API.*;
+import static java.math.BigDecimal.ONE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
@@ -203,10 +205,10 @@ public class UserApiTest {
      *
      * @param
      * @return
-     * @author shixiongfei
+     * @author xiaofeifei
      * @date 2020-02-03
      * @updateDate 2020-02-03
-     * @updatedBy shixiongfei
+     * @updatedBy xiaofeifei
      */
     @Test
     public void getUserInfoShouldReturn200() throws Exception {
@@ -228,10 +230,10 @@ public class UserApiTest {
      *
      * @param
      * @return
-     * @author shixiongfei
+     * @author xiaofeifei
      * @date 2020-02-03
      * @updateDate 2020-02-03
-     * @updatedBy shixiongfei
+     * @updatedBy xiaofeifei
      */
     @Test
     public void getUserInfoShouldReturn404() throws Exception {
@@ -250,10 +252,10 @@ public class UserApiTest {
      *
      * @param
      * @return
-     * @author shixiongfei
+     * @author xiaofeifei
      * @date 2020-02-03
      * @updateDate 2020-02-03
-     * @updatedBy shixiongfei
+     * @updatedBy xiaofeifei
      */
     @Test
     public void editUserShouldReturn200() throws Exception {
@@ -283,10 +285,10 @@ public class UserApiTest {
      *
      * @param
      * @return
-     * @author shixiongfei
+     * @author xiaofeifei
      * @date 2020-02-03
      * @updateDate 2020-02-03
-     * @updatedBy shixiongfei
+     * @updatedBy xiaofeifei
      */
     @Test
     public void editUserShouldReturnLogic400() throws Exception {
@@ -304,10 +306,10 @@ public class UserApiTest {
      *
      * @param
      * @return
-     * @author shixiongfei
+     * @author xiaofeifei
      * @date 2020-02-03
      * @updateDate 2020-02-03
-     * @updatedBy shixiongfei
+     * @updatedBy xiaofeifei
      */
     @Test
     public void editUserShouldReturnBusiness400() throws Exception {
@@ -326,12 +328,12 @@ public class UserApiTest {
     /**
      * 编辑不存在的用户时返回错误信息404
      *
-     * @author shixiongfei
-     * @date 2020-02-03
-     * @updateDate 2020-02-03
-     * @updatedBy shixiongfei
      * @param
      * @return
+     * @author xiaofeifei
+     * @date 2020-02-03
+     * @updateDate 2020-02-03
+     * @updatedBy xiaofeifei
      */
     @Test
     public void editUserShouldReturn404() throws Exception {
@@ -345,4 +347,25 @@ public class UserApiTest {
                 .andDo(document("user-edit-404"));
     }
 
+    /**
+     * 删除用户信息成功返回204
+     *
+     * @author xiaofeifei
+     * @date 2020-02-04
+     * @updateDate 2020-02-04
+     * @updatedBy xiaofeifei
+     * @param
+     * @return
+     */
+    @Test
+    public void deleteUserShouldReturn204() throws Exception {
+        mvc.perform(RestDocumentationRequestBuilders
+                .delete(ApiConstant.USER_ENDPOINT + "/{id}", IdWorker.getId())
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isNoContent())
+                .andDo(print())
+                .andDo(document("user-delete", PATH_PARAMETERS));
+
+        Mockito.verify(service, times(1)).delete(anyString());
+    }
 }

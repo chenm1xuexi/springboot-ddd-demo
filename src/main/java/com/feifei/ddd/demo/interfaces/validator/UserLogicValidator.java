@@ -41,10 +41,10 @@ public class UserLogicValidator {
     /**
      * 对编辑用户信息进行逻辑校验
      *
-     * @author shixiongfei
+     * @author xiaofeifei
      * @date 2020-02-03
      * @updateDate 2020-02-03
-     * @updatedBy shixiongfei
+     * @updatedBy xiaofeifei
      * @param
      * @return
      */

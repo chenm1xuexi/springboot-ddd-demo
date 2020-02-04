@@ -1,6 +1,7 @@
 package com.feifei.ddd.demo.domain.user;
 
 import com.feifei.ddd.demo.domain.user.entity.User;
+import io.vavr.control.Option;
 
 import java.util.Optional;
 
@@ -29,10 +30,10 @@ public interface UserRepository {
     /**
      * 通过主键来获取用户信息
      *
-     * @author shixiongfei
+     * @author xiaofeifei
      * @date 2020-02-03
      * @updateDate 2020-02-03
-     * @updatedBy shixiongfei
+     * @updatedBy xiaofeifei
      * @param id 主键id
      * @return
      */
@@ -41,12 +42,36 @@ public interface UserRepository {
     /**
      * 修改指定的用户信息
      *
-     * @author shixiongfei
+     * @author xiaofeifei
      * @date 2020-02-03
      * @updateDate 2020-02-03
-     * @updatedBy shixiongfei
+     * @updatedBy xiaofeifei
      * @param
      * @return
      */
     User edit(User user);
+
+    /**
+     * 通过用户名来查询用户信息
+     *
+     * @author xiaofeifei
+     * @date 2020-02-04
+     * @updateDate 2020-02-04
+     * @updatedBy xiaofeifei
+     * @param
+     * @return
+     */
+    Option<User> getByUsername(String username);
+
+    /**
+     * 通过用户资源主键id来删除用户信息
+     *
+     * @author xiaofeifei
+     * @date 2020-02-04
+     * @updateDate 2020-02-04
+     * @updatedBy xiaofeifei
+     * @param
+     * @return
+     */
+    void delete(String id);
 }
