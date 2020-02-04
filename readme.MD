@@ -4,6 +4,8 @@
 采用的Java版本是Java11 如果不习惯的或未使用java11的小伙伴，请先下载java11
 下载地址为：https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html
 
+项目的接口文档位于 src -> resource -> doc -> index.html
+
 # 功能
 
 - Gradle项目构建管理
