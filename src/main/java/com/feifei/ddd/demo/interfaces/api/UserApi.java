@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import static io.vavr.API.*;
 import static io.vavr.Patterns.*;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 /**
  * 用户接口层
@@ -59,7 +60,13 @@ public class UserApi {
 
     @GetMapping("/{id}")
     public ResponseEntity get(@PathVariable String id) {
-        return Restful.ok(service.getInfo(id));
+        return Restful.ok(service.getInfo(id).map(info -> {
+            // 添加link
+            info.add(linkTo(UserApi.class).slash(id).withSelfRel());
+            info.add(linkTo(UserApi.class).slash(id).withRel(ApiConstant.EDIT_REL));
+            info.add(linkTo(UserApi.class).slash(id).withRel(ApiConstant.DELETE_REL));
+            return info;
+        }));
     }
 
     @PutMapping("/{id}")
@@ -69,7 +76,16 @@ public class UserApi {
         // 2.Right None 404
         // 3.Right Some Left 400
         // 4.Right Some Right 200
-         val result = UserLogicValidator.validate(request).map(req -> service.edit(id, req));
+        val result = UserLogicValidator.validate(request)
+                .map(req -> service.edit(id, req)
+                        .map(t -> t.map(info -> {
+                                    info.add(linkTo(UserApi.class).slash(id).withSelfRel());
+                                    info.add(linkTo(UserApi.class).slash(id).withRel(ApiConstant.REL_INFO));
+                                    info.add(linkTo(UserApi.class).slash(id).withRel(ApiConstant.DELETE_REL));
+                                    return info;
+                                })
+                        )
+                );
 
         return Match(result).of(
                 Case($Left($()), Restful::badRequest),
@@ -82,6 +98,11 @@ public class UserApi {
     public ResponseEntity delete(@PathVariable String id) {
         service.delete(id);
         return Restful.noContent();
+    }
+
+    @GetMapping("/error")
+    public ResponseEntity error() {
+        throw new IllegalArgumentException();
     }
 
 }

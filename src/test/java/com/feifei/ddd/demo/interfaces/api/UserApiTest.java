@@ -20,6 +20,7 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.headers.ResponseHeadersSnippet;
@@ -40,6 +41,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -91,7 +94,8 @@ public class UserApiTest {
     private static final ResponseFieldsSnippet RESPONSE_FIELDS = responseFields(
             fieldWithPath("username").description("用户名"),
             fieldWithPath("create_at").description("创建时间 yyyy-MM-dd HH:mm:ss"),
-            fieldWithPath("update_at").description("更新时间 yyyy-MM-dd HH:mm:ss"));
+            fieldWithPath("update_at").description("更新时间 yyyy-MM-dd HH:mm:ss"),
+            subsectionWithPath("_links").description("自身资源链接地址"));
 
     private static final RequestFieldsSnippet REQUEST_FIELDS = requestFields(
             fieldWithPath("username").description("用户名"),
@@ -222,7 +226,15 @@ public class UserApiTest {
                 // 期望返回200
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andDo(document("user-info-200", PATH_PARAMETERS, RESPONSE_FIELDS));
+                .andDo(document("user-info-200", PATH_PARAMETERS, RESPONSE_FIELDS,
+                        links(
+                                linkWithRel("self").description("资源自身链接"),
+                                linkWithRel(ApiConstant.EDIT_REL).description("资源修改链接"),
+                                linkWithRel(ApiConstant.DELETE_REL).description("资源删除链接")
+                        )));
+
+        // 原先返回的数据格式为: {"username":"bibi", ...}
+        // 3级rest返回的数据格式为: {"username":"bibi", "_links":{"self":"www.xiaofeifei.com"}}
     }
 
     /**
@@ -277,7 +289,12 @@ public class UserApiTest {
                 .content(objectMapper.writeValueAsString(editDTO)))
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andDo(document("user-edit", PATH_PARAMETERS, REQUEST_FIELDS, RESPONSE_FIELDS));
+                .andDo(document("user-edit", PATH_PARAMETERS, REQUEST_FIELDS, RESPONSE_FIELDS,
+                        links(
+                            linkWithRel(Link.REL_SELF).description("资源自身链接"),
+                            linkWithRel(ApiConstant.REL_INFO).description("资源详情链接"),
+                            linkWithRel(ApiConstant.DELETE_REL).description("资源删除链接")
+                        )));
     }
 
     /**
@@ -350,12 +367,12 @@ public class UserApiTest {
     /**
      * 删除用户信息成功返回204
      *
+     * @param
+     * @return
      * @author xiaofeifei
      * @date 2020-02-04
      * @updateDate 2020-02-04
      * @updatedBy xiaofeifei
-     * @param
-     * @return
      */
     @Test
     public void deleteUserShouldReturn204() throws Exception {
@@ -367,5 +384,9 @@ public class UserApiTest {
                 .andDo(document("user-delete", PATH_PARAMETERS));
 
         Mockito.verify(service, times(1)).delete(anyString());
+    }
+
+    @Test
+    public void getListShouldReturnList() throws Exception {
     }
 }

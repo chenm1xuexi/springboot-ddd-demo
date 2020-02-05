@@ -9,4 +9,10 @@ package com.feifei.ddd.demo.infrastructure.constant;
 public interface ApiConstant {
 
     String USER_ENDPOINT = "/users";
+
+    String EDIT_REL = "edit";
+
+    String DELETE_REL = "delete";
+
+    String REL_INFO = "info";
 }

@@ -6,6 +6,7 @@ import io.vavr.collection.Seq;
 import io.vavr.control.Either;
 import io.vavr.control.Option;
 import lombok.val;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -69,5 +70,9 @@ public interface Restful
   static ResponseEntity noContent()
   {
     return ResponseEntity.noContent().build();
+  }
+
+  static ResponseEntity error(ApiError errors) {
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errors);
   }
 }
