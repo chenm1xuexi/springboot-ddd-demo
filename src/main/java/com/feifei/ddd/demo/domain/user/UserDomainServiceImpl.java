@@ -1,6 +1,5 @@
 package com.feifei.ddd.demo.domain.user;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.feifei.ddd.demo.domain.user.entity.User;
 import com.feifei.ddd.demo.infrastructure.ApiError;
 import com.feifei.ddd.demo.interfaces.dto.user.UserEditDTO;

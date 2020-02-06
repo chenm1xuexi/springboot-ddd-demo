@@ -14,7 +14,7 @@ xiaofeifei;
 == 1.1 用户接口
 
 [[apis-user-create]]
-=== 1.1.1 用户创建 /users
+=== 1.1.1 用户创建 /users{?page,size}
 
 === 请求参数
 include::{snippets}/user-create/request-fields.adoc[]
@@ -40,6 +40,9 @@ include::{snippets}/user-create-logic-400/http-response.adoc[]
 === 请求URI
 include::{snippets}/user-info-200/path-parameters.adoc[]
 
+=== 超链接
+include::{snippets}/user-info-200/links.adoc[]
+
 === 响应参数
 include::{snippets}/user-info-200/response-fields.adoc[]
 
@@ -59,7 +62,10 @@ include::{snippets}/user-info-404/http-response.adoc[]
 include::{snippets}/user-info-200/path-parameters.adoc[]
 
 === 请求参数
-include::{snippets}/user-edit/request-fields.adoc
+include::{snippets}/user-edit/request-fields.adoc[]
+
+=== 超链接
+include::{snippets}/user-edit/links.adoc[]
 
 === 响应参数
 include::{snippets}/user-edit/response-fields.adoc[]
@@ -68,7 +74,7 @@ include::{snippets}/user-edit/response-fields.adoc[]
 include::{snippets}/user-edit/curl-request.adoc[]
 
 === 示例响应1
-include::{snippets}/user-edit/http-response.adoc[
+include::{snippets}/user-edit/http-response.adoc[]
 
 === 示例响应1
 include::{snippets}/user-edit-logic-400/http-response.adoc[]
@@ -90,3 +96,18 @@ include::{snippets}/user-delete/curl-request.adoc[]
 
 === 示例响应1
 include::{snippets}/user-delete/http-response.adoc[]
+
+[[apis-user-list]]
+=== 1.1.4 用户列表 /users
+
+== 请求参数
+include::{snippets}/user-list/request-parameters.adoc[]
+
+=== 超链接
+include::{snippets}/user-list/links.adoc[]
+
+=== 示例请求
+include::{snippets}/user-list/curl-request.adoc[]
+
+=== 示例响应1
+include::{snippets}/user-list/http-response.adoc[]

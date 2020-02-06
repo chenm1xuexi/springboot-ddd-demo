@@ -1,12 +1,14 @@
 package com.feifei.ddd.demo.application.service;
 
 import com.feifei.ddd.demo.infrastructure.ApiError;
+import com.feifei.ddd.demo.infrastructure.tool.Pagination;
 import com.feifei.ddd.demo.interfaces.dto.user.UserEditDTO;
 import com.feifei.ddd.demo.interfaces.dto.user.UserInfoDTO;
 import com.feifei.ddd.demo.interfaces.dto.user.UserCreate;
 import io.vavr.collection.Seq;
 import io.vavr.control.Either;
 import io.vavr.control.Option;
+import org.springframework.data.domain.Page;
 
 /**
  * 用于应用服务层，用于对接口请求
@@ -67,4 +69,16 @@ public interface UserService {
      * @return
      */
     void delete(String id);
+
+    /**
+     * 获取用户信息列表
+     *
+     * @author shixiongfei
+     * @date 2020-02-05
+     * @updateDate 2020-02-05
+     * @updatedBy shixiongfei
+     * @param
+     * @return
+     */
+    Page<UserInfoDTO> list(Pagination page);
 }

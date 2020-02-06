@@ -1,6 +1,7 @@
 package com.feifei.ddd.demo.domain.user;
 
 import com.feifei.ddd.demo.domain.user.entity.User;
+import com.feifei.ddd.demo.infrastructure.tool.Pagination;
 import io.vavr.control.Option;
 
 import java.util.Optional;
@@ -74,4 +75,16 @@ public interface UserRepository {
      * @return
      */
     void delete(String id);
+
+    /**
+     * 通过分页来获取用户信息列表
+     *
+     * @author shixiongfei
+     * @date 2020-02-06
+     * @updateDate 2020-02-06
+     * @updatedBy shixiongfei
+     * @param page 分页
+     * @return
+     */
+    Pagination list(Pagination page);
 }

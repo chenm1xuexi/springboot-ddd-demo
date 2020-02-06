@@ -1,10 +1,7 @@
 package com.feifei.ddd.demo.domain.user;
 
 import com.feifei.ddd.demo.domain.user.entity.User;
-import com.feifei.ddd.demo.infrastructure.ApiError;
 import com.feifei.ddd.demo.interfaces.dto.user.UserEditDTO;
-import io.vavr.collection.Seq;
-import io.vavr.control.Either;
 import io.vavr.control.Option;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;

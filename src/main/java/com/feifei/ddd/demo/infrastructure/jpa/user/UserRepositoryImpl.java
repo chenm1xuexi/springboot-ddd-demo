@@ -1,11 +1,13 @@
 package com.feifei.ddd.demo.infrastructure.jpa.user;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.feifei.ddd.demo.domain.user.UserRepository;
 import com.feifei.ddd.demo.domain.user.entity.User;
 import com.feifei.ddd.demo.infrastructure.jpa.assembler.UserAssembler;
 import com.feifei.ddd.demo.infrastructure.jpa.mapper.UserMapper;
 import com.feifei.ddd.demo.infrastructure.jpa.po.TbUser;
+import com.feifei.ddd.demo.infrastructure.tool.Pagination;
 import com.feifei.ddd.demo.infrastructure.utils.CustomAssert;
 import io.vavr.control.Option;
 import lombok.AccessLevel;
@@ -65,5 +67,13 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void delete(String id) {
         userMapper.deleteById(id);
+    }
+
+    @Override
+    public Pagination list(Pagination pagination) {
+        Page<TbUser> page = new Page<>(pagination.getCurrent(), pagination.getSize());
+        QueryWrapper<TbUser> queryWrapper = new QueryWrapper<>();
+        val tbUserPage = userMapper.selectPage(page, queryWrapper);
+        return UserAssembler.toPageEntity(tbUserPage, pagination);
     }
 }

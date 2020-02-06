@@ -4,11 +4,11 @@ import com.feifei.ddd.demo.domain.user.UserDomainService;
 import com.feifei.ddd.demo.domain.user.entity.User;
 import com.feifei.ddd.demo.domain.user.UserRepository;
 import com.feifei.ddd.demo.infrastructure.ApiError;
+import com.feifei.ddd.demo.infrastructure.tool.Pagination;
 import com.feifei.ddd.demo.interfaces.assembler.UserAssembler;
 import com.feifei.ddd.demo.interfaces.dto.user.UserCreate;
 import com.feifei.ddd.demo.interfaces.dto.user.UserEditDTO;
 import com.feifei.ddd.demo.interfaces.dto.user.UserInfoDTO;
-import io.vavr.API;
 import io.vavr.collection.Seq;
 import io.vavr.control.Either;
 import io.vavr.control.Option;
@@ -16,6 +16,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,5 +67,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(String id) {
         repository.delete(id);
+    }
+
+    @Override
+    public Page<UserInfoDTO> list(Pagination page) {
+        val result = repository.list(page);
+        return UserAssembler.toPageDTO(result);
     }
 }

@@ -6,6 +6,7 @@ import com.feifei.ddd.demo.infrastructure.ApiError;
 import com.feifei.ddd.demo.infrastructure.config.ServerConfiguration;
 import com.feifei.ddd.demo.infrastructure.constant.ApiConstant;
 import com.feifei.ddd.demo.infrastructure.tool.IdWorker;
+import com.feifei.ddd.demo.infrastructure.tool.Pagination;
 import com.feifei.ddd.demo.interfaces.dto.user.UserEditDTO;
 import com.feifei.ddd.demo.interfaces.dto.user.UserInfoDTO;
 import com.feifei.ddd.demo.interfaces.dto.user.UserCreate;
@@ -20,6 +21,8 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -28,13 +31,15 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.RequestFieldsSnippet;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.restdocs.request.PathParametersSnippet;
+import org.springframework.restdocs.snippet.Snippet;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultHandler;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import static io.vavr.API.*;
-import static java.math.BigDecimal.ONE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
@@ -44,9 +49,10 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.responseH
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -55,6 +61,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * 用户接口层单元测试用例
  * <p>
  * 现在采用的TDD的开发模式，通过测试用例来驱动代码开发
+ * <p>
+ * 这里主要采用rest第3级的格式要求，第三级对应于前端人员是非常友好，
+ * 因为它返回的并非冰冷的数据，而是返回数据的具体可进行的延展操作，想深入理解rest 3级（超媒体资源驱动）可自行学习
+ * 但是实际开发中能作答rest第二级的格式要求就已经很不错了。对应于实际开发中
+ * 的企业要求来选定具体的rest的格式级别
  *
  * @author xiaofeifei
  * @date 2020-02-02
@@ -104,6 +115,19 @@ public class UserApiTest {
     private static final ResponseHeadersSnippet RESPONSE_HEADERS = responseHeaders(
             headerWithName(HttpHeaders.LOCATION).description("资源唯一URI"));
 
+    /**
+     * 自定义格式化文档打印
+     *
+     * @author shixiongfei
+     * @date 2020-02-06
+     * @updateDate 2020-02-06
+     * @updatedBy shixiongfei
+     * @param
+     * @return
+     */
+    private ResultHandler customDocument(String name, Snippet... snippets) {
+        return document(name, preprocessRequest(prettyPrint()), preprocessResponse(prettyPrint()), snippets);
+    }
 
     @Test
     public void userCreateShouldReturn201() throws Exception {
@@ -119,7 +143,7 @@ public class UserApiTest {
                 // 打印处理流程
                 .andDo(print())
                 // 生成开发文档
-                .andDo(document("user-create",
+                .andDo(customDocument("user-create",
                         // 设置文档的请求参数
                         requestFields(
                                 fieldWithPath("username").description("用户名"),
@@ -162,7 +186,7 @@ public class UserApiTest {
                 // 打印处理流程
                 .andDo(print())
                 // 生成开发文档
-                .andDo(document("user-create-logic-400", ERRORS));
+                .andDo(customDocument("user-create-logic-400", ERRORS));
 
         // 返回400的响应体为：
         // 400 bad request
@@ -200,7 +224,7 @@ public class UserApiTest {
                 // 打印处理流程
                 .andDo(print())
                 // 生成开发文档
-                .andDo(document("user-create-business-400", ERRORS));
+                .andDo(customDocument("user-create-business-400", ERRORS));
 
     }
 
@@ -219,14 +243,14 @@ public class UserApiTest {
         // 因为领域模型实体是充血模型，所以尽量不要暴露给外界，所以需要在应用层做一个转换
         // 假设返回的是一个DTO，命名为UserInfoDTO
         val now = LocalDateTime.now();
-        val dto = new UserInfoDTO("Gibson", now, now);
+        val dto = new UserInfoDTO(IdWorker.getId(), "Gibson", now, now);
         // 因为是测试驱动开发，所以我们查询的接口所调用的应用服务层我们需要mock 一下
         Mockito.when(service.getInfo(Mockito.anyString())).thenReturn(Option(dto));
         mvc.perform(RestDocumentationRequestBuilders.get(ApiConstant.USER_ENDPOINT + "/{id}", IdWorker.getId()))
                 // 期望返回200
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andDo(document("user-info-200", PATH_PARAMETERS, RESPONSE_FIELDS,
+                .andDo(customDocument("user-info-200", PATH_PARAMETERS, RESPONSE_FIELDS,
                         links(
                                 linkWithRel("self").description("资源自身链接"),
                                 linkWithRel(ApiConstant.EDIT_REL).description("资源修改链接"),
@@ -256,7 +280,7 @@ public class UserApiTest {
                 .get(ApiConstant.USER_ENDPOINT + "/{id}", IdWorker.getId()))
                 .andExpect(status().isNotFound())
                 .andDo(print())
-                .andDo(document("user-info-404"));
+                .andDo(customDocument("user-info-404"));
     }
 
     /**
@@ -274,11 +298,8 @@ public class UserApiTest {
 
         val editDTO = new UserEditDTO("Gibson", "654321");
 
-        UserInfoDTO infoDTO = new UserInfoDTO();
         val now = LocalDateTime.now();
-        infoDTO.setUsername("Gibson");
-        infoDTO.setCreateAt(now);
-        infoDTO.setUpdateAt(now);
+        UserInfoDTO infoDTO = new UserInfoDTO(IdWorker.getId(), "Gibson", now, now);
 
         // 模拟一个编辑操作，返回修改后的用户详情信息
         when(service.edit(anyString(), any(UserEditDTO.class))).thenReturn(Option(Right(infoDTO)));
@@ -289,11 +310,11 @@ public class UserApiTest {
                 .content(objectMapper.writeValueAsString(editDTO)))
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andDo(document("user-edit", PATH_PARAMETERS, REQUEST_FIELDS, RESPONSE_FIELDS,
+                .andDo(customDocument("user-edit", PATH_PARAMETERS, REQUEST_FIELDS, RESPONSE_FIELDS,
                         links(
-                            linkWithRel(Link.REL_SELF).description("资源自身链接"),
-                            linkWithRel(ApiConstant.REL_INFO).description("资源详情链接"),
-                            linkWithRel(ApiConstant.DELETE_REL).description("资源删除链接")
+                                linkWithRel(Link.REL_SELF).description("资源自身链接"),
+                                linkWithRel(ApiConstant.REL_INFO).description("资源详情链接"),
+                                linkWithRel(ApiConstant.DELETE_REL).description("资源删除链接")
                         )));
     }
 
@@ -315,7 +336,7 @@ public class UserApiTest {
                 .content(objectMapper.writeValueAsString(editDTO)))
                 .andExpect(status().isBadRequest())
                 .andDo(print())
-                .andDo(document("user-edit-logic-400", ERRORS));
+                .andDo(customDocument("user-edit-logic-400", ERRORS));
     }
 
     /**
@@ -339,7 +360,7 @@ public class UserApiTest {
                 .content(objectMapper.writeValueAsString(editDTO)))
                 .andExpect(status().isBadRequest())
                 .andDo(print())
-                .andDo(document("user-edit-business-400", ERRORS));
+                .andDo(customDocument("user-edit-business-400", ERRORS));
     }
 
     /**
@@ -361,7 +382,7 @@ public class UserApiTest {
                 .content(objectMapper.writeValueAsString(editDTO)))
                 .andExpect(status().isNotFound())
                 .andDo(print())
-                .andDo(document("user-edit-404"));
+                .andDo(customDocument("user-edit-404"));
     }
 
     /**
@@ -381,12 +402,59 @@ public class UserApiTest {
                 .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isNoContent())
                 .andDo(print())
-                .andDo(document("user-delete", PATH_PARAMETERS));
+                .andDo(customDocument("user-delete", PATH_PARAMETERS));
 
         Mockito.verify(service, times(1)).delete(anyString());
     }
 
+    /**
+     * 获取列表信息成功则返回列表
+     * 返回的为rest第三级的分页
+     *
+     * @param
+     * @return
+     * @author shixiongfei
+     * @date 2020-02-05
+     * @updateDate 2020-02-05
+     * @updatedBy shixiongfei
+     */
     @Test
     public void getListShouldReturnList() throws Exception {
+
+        val now = LocalDateTime.now();
+        val infoDTO = new UserInfoDTO(com.baomidou.mybatisplus.core.toolkit.IdWorker.getIdStr(), "xiaofeifei", now, now);
+        val infoDTO1 = new UserInfoDTO(com.baomidou.mybatisplus.core.toolkit.IdWorker.getIdStr(), "feifei", now.plusDays(2), now.plusDays(3));
+
+        val page = new PageImpl<>(Arrays.asList(infoDTO, infoDTO1), PageRequest.of(1, 2), 2);
+        when(service.list(any(Pagination.class))).thenReturn(page);
+        mvc.perform(get(ApiConstant.USER_ENDPOINT)
+                .param("page", page.getNumber() + "")
+                .param("size", page.getSize() + ""))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(customDocument("user-list",
+                        relaxedRequestParameters(
+                                parameterWithName("page").description("页码"),
+                                parameterWithName("size").description("每页条数")
+                        ),
+                        links(
+                                linkWithRel(Link.REL_SELF).description("集合资源自身链接"),
+                                linkWithRel(Link.REL_FIRST).description("第一页资源自身链接"),
+                                linkWithRel(Link.REL_PREVIOUS).description("上一页资源自身链接").optional(),
+                                linkWithRel(Link.REL_NEXT).description("下一页资源自身链接").optional(),
+                                linkWithRel(Link.REL_LAST).description("最后一页资源自身链接")
+                        ),
+                        responseFields(
+                                fieldWithPath("page.size").description("每页条数"),
+                                fieldWithPath("page.total_elements").description("总条数"),
+                                fieldWithPath("page.total_pages").description("总页数"),
+                                fieldWithPath("page.number").description("每页条数"),
+                                subsectionWithPath("_links").description("资源地址"),
+                                fieldWithPath("_embedded.data[].username").description("用户名"),
+                                fieldWithPath("_embedded.data[].create_at").description("创建时间 yyyy-MM-dd HH:mm:ss"),
+                                fieldWithPath("_embedded.data[].update_at").description("用户名 yyyy-MM-dd HH:mm:sss"),
+                                subsectionWithPath("_embedded.data[]._links").description("资源地址")
+                        )
+                ));
     }
 }

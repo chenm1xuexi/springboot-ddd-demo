@@ -1,23 +1,22 @@
 package com.feifei.ddd.demo.interfaces.api;
 
 import com.feifei.ddd.demo.application.service.UserService;
-import com.feifei.ddd.demo.infrastructure.ApiError;
 import com.feifei.ddd.demo.infrastructure.constant.ApiConstant;
+import com.feifei.ddd.demo.infrastructure.tool.Pagination;
 import com.feifei.ddd.demo.infrastructure.tool.Restful;
 import com.feifei.ddd.demo.interfaces.dto.user.UserEditDTO;
 import com.feifei.ddd.demo.interfaces.dto.user.UserInfoDTO;
 import com.feifei.ddd.demo.interfaces.validator.UserLogicValidator;
 import com.feifei.ddd.demo.interfaces.dto.user.UserCreate;
 import io.vavr.API;
-import io.vavr.collection.Seq;
-import io.vavr.control.Either;
-import io.vavr.control.Option;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 import static io.vavr.API.*;
 import static io.vavr.Patterns.*;
@@ -41,6 +40,8 @@ public class UserApi {
      * 这里采用构造器注入的方式，不采用@Autowired属性注入
      */
     UserService service;
+
+    PagedResourcesAssembler<UserInfoDTO> pageAssembler;
 
     @PostMapping
     public ResponseEntity create(@RequestBody UserCreate request) {
@@ -100,8 +101,22 @@ public class UserApi {
         return Restful.noContent();
     }
 
+
+    @GetMapping
+    public ResponseEntity list(Pagination request) {
+        val list = service.list(request).map(info -> {
+                    // 添加link
+                    info.add(linkTo(UserApi.class).slash(info.id).withSelfRel());
+                    info.add(linkTo(UserApi.class).slash(info.id).withRel(ApiConstant.EDIT_REL));
+                    info.add(linkTo(UserApi.class).slash(info.id).withRel(ApiConstant.DELETE_REL));
+                    return info;
+                });
+        return Restful.ok(pageAssembler.toResource(list));
+    }
+
     @GetMapping("/error")
     public ResponseEntity error() {
+        // 用于测试全局异常处理器是否生效
         throw new IllegalArgumentException();
     }
 
