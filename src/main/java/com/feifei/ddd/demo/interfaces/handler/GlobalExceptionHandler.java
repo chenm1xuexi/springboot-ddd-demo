@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  *
  * 这里只是粗粒度的处理异常，可针对自己的业务类型的异常错误来进行细化
  *
- * @author shixiongfei
+ * @author xiaofeifei
  * @date 2020-02-05
  * @since
  */

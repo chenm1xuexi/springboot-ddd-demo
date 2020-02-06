@@ -73,10 +73,10 @@ public interface UserService {
     /**
      * 获取用户信息列表
      *
-     * @author shixiongfei
+     * @author xiaofeifei
      * @date 2020-02-05
      * @updateDate 2020-02-05
-     * @updatedBy shixiongfei
+     * @updatedBy xiaofeifei
      * @param
      * @return
      */

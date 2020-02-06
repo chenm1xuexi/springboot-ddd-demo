@@ -38,10 +38,10 @@ public interface UserAssembler {
      * 领域层和基础设施层的实现是解耦的，领域层并不关注数据是如何存储的以及
      * 如何从持久层获取到数据，既然解耦，那么就不应该依赖于基础设施层中的mybatis-plus分页类
      *
-     * @author shixiongfei
+     * @author xiaofeifei
      * @date 2020-02-06
      * @updateDate 2020-02-06
-     * @updatedBy shixiongfei
+     * @updatedBy xiaofeifei
      * @param
      * @return
      */

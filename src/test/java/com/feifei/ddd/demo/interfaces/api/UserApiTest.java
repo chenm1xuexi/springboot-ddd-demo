@@ -118,10 +118,10 @@ public class UserApiTest {
     /**
      * 自定义格式化文档打印
      *
-     * @author shixiongfei
+     * @author xiaofeifei
      * @date 2020-02-06
      * @updateDate 2020-02-06
-     * @updatedBy shixiongfei
+     * @updatedBy xiaofeifei
      * @param
      * @return
      */
@@ -413,10 +413,10 @@ public class UserApiTest {
      *
      * @param
      * @return
-     * @author shixiongfei
+     * @author xiaofeifei
      * @date 2020-02-05
      * @updateDate 2020-02-05
-     * @updatedBy shixiongfei
+     * @updatedBy xiaofeifei
      */
     @Test
     public void getListShouldReturnList() throws Exception {

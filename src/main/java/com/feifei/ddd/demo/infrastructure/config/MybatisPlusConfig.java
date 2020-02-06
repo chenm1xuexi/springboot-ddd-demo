@@ -11,10 +11,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 /**
  * mybatis-plus分页插件配置类
  *
- * @author shixiongfei
+ * @author xiaofeifei
  * @date 2020-02-06
  * @updateDate 2020-02-06
- * @updatedBy shixiongfei
+ * @updatedBy xiaofeifei
  * @param
  * @return
  */
